@@ -1,15 +1,13 @@
 import { useState, useEffect } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
 import './App.css';
+import Pill from './components/pill';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState(''); // gives an array one is variable and another is a function
   const [suggestions, setSuggestions] = useState([]);
   // by default useState will be empty
-  const [count, setCount] = useState(0);
   // 'https://dummyjson.com/users/search?q=John'
-  const [slectedUsers, setSelectedUsers] = useState([]);
+  const [selectedUsers, setSelectedUsers] = useState([]);
   const [selectedUserSet, setSelectedUserSet] = useState(new Set());
 
   useEffect(() => {
@@ -20,7 +18,7 @@ function App() {
       }
       fetch(`https://dummyjson.com/users/search?q=${searchTerm}`)
         .then((res) => {
-          res.json();
+          return res.json();
         })
         .then((data) => setSuggestions(data))
         .catch((err) => {
@@ -41,8 +39,8 @@ function App() {
   };
 
   const handleRemoveUser = (user) => {
-    const updatedUsers = slectedUsers.filter(
-      (selctedUser) => slectedUser.id !== user.id
+    const updatedUsers = selectedUsers.filter(
+      (selctedUser) => selctedUser.id !== user.id
     );
     setSelectedUsers(updatedUsers);
 
@@ -54,9 +52,9 @@ function App() {
     <div className="user-search-container">
       <div className="user-search-input">
         {/* {pills} */}
-        {slectedUsers.map((user) => {
+        {selectedUsers.map((user) => {
           return (
-            <pill
+            <Pill
               key={user.email}
               image={user.image}
               text={`${user.firstName} ${user.lastName}`}
@@ -73,9 +71,9 @@ function App() {
             placeholder="Search for a user..."
           />
           <ul className="suggestions-list">
-            {suggestions?.users?.map((user, index) => {
-              console.log('slectedUserSet --->', selectedUserSet);
-              return selectedUserSet.has(user.email) ? (
+            {suggestions?.users?.map((user) => {
+              console.log('selectedUserset --->', selectedUserSet);
+              return !selectedUserSet.has(user.email) ? (
                 // current user which we selected
                 <li key={user.email} onClick={() => handleSelectUser(user)}>
                   <img
@@ -83,7 +81,7 @@ function App() {
                     alt={`${user.firstName} ${user.lastName}`}
                   />
                   <span>
-                    ${user.firstName} ${user.lastName}
+                    {user.firstName} {user.lastName}
                   </span>
                 </li>
               ) : (
@@ -99,3 +97,4 @@ function App() {
 }
 
 export default App;
+ 
